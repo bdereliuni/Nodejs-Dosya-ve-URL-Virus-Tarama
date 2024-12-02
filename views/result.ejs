@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarama Sonucu | Güvenlik Tarama Merkezi</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --secondary-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            --success-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--secondary-gradient);
+            min-height: 100vh;
+            color: #1f2937;
+            line-height: 1.6;
+            padding: 2rem 0;
+        }
+
+        .result-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .result-header h1 {
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+
+        .result-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .text-success {
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-danger {
+            background: var(--danger-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: none;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1));
+            color: #16a34a;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            color: #dc2626;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .result-card-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .result-card-body {
+            padding: 2rem;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item:hover {
+            background: #f9fafb;
+        }
+
+        .info-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #1f2937;
+            word-break: break-all;
+        }
+
+        .scan-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .scan-table th {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1rem;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .scan-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .scan-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .status-safe {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1));
+            color: #16a34a;
+        }
+
+        .status-threat {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            color: #dc2626;
+        }
+
+        .loading-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            padding: 3rem;
+            text-align: center;
+            max-width: 600px;
+            margin: 4rem auto;
+        }
+
+        .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .loading-spinner {
+            color: #6366f1;
+            margin-bottom: 1rem;
+        }
+
+        .loading-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .loading-text {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-bar-inner {
+            width: 30%;
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 999px;
+            animation: loading 2s infinite ease-in-out;
+        }
+
+        @keyframes loading {
+            0% { width: 0%; margin-left: 0%; }
+            50% { width: 30%; margin-left: 70%; }
+            100% { width: 0%; margin-left: 100%; }
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0;
+            }
+
+            .result-header h1 {
+                font-size: 2rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .info-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .loading-container {
+                margin: 2rem 1rem;
+                padding: 2rem;
+            }
+
+            .loading-title {
+                font-size: 1.5rem;
+            }
+
+            .back-button {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+        }
+
+        @media print {
+            .back-button {
+                display: none;
+            }
+
+            .result-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #e5e7eb;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        <% if ((type === 'file' && (!scanData.scans || scanData.response_code !== 1)) || (type === 'url' && (!scanData.url || scanData.response_code === -2))) { %>
+            <!-- Tarama Devam Ediyor -->
+            <div class="loading-container">
+                <div class="loading-content">
+                    <div class="loading-spinner">
+                        <i class="fas fa-circle-notch fa-spin fa-4x"></i>
+                    </div>
+                    <h2 class="loading-title">Tarama Devam Ediyor</h2>
+                    <p class="loading-text">Lütfen bekleyin, sonuçlar hazırlanıyor...</p>
+                    <div class="progress-bar">
+                        <div class="progress-bar-inner"></div>
+                    </div>
+                </div>
+            </div>
+        <% } else { %>
+            <!-- Sonuç Başlığı -->
+            <div class="result-header">
+                <h1>
+                    <i class="fas fa-shield-alt mr-3"></i>
+                    <%= type === 'file' ? 'Dosya Tarama Sonucu' : 'URL Tarama Sonucu' %>
+                </h1>
+                <p>Tarama işlemi <%= new Date(scanData.scan_date).toLocaleString('tr-TR') %> tarihinde tamamlandı</p>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number text-success">
+                        <%= scanData.total - scanData.positives %>
+                    </div>
+                    <div class="stat-label">Temiz Sonuç</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number text-danger">
+                        <%= scanData.positives %>
+                    </div>
+                    <div class="stat-label">Tehdit Tespiti</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <%= scanData.total %>
+                    </div>
+                    <div class="stat-label">Toplam Kontrol</div>
+                </div>
+            </div>
+
+            <!-- Genel Durum -->
+            <% if (scanData.positives > 0) { %>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    <div>
+                        <h4 class="mb-1">Tehdit Tespit Edildi!</h4>
+                        <p class="mb-0"><%= scanData.positives %> antivirüs yazılımı tehdit tespit etti.</p>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle fa-2x"></i>
+                    <div>
+                        <h4 class="mb-1">Güvenli!</h4>
+                        <p class="mb-0">Hiçbir tehdit tespit edilmedi.</p>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Detaylı Bilgiler -->
+            <div class="result-card">
+                <div class="result-card-header">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Detaylı Bilgiler
+                </div>
+                <div class="result-card-body">
+                    <ul class="info-list">
+                        <% if (type === 'file') { %>
+                            <li class="info-item">
+                                <span class="info-label">MD5</span>
+                                <span class="info-value"><%= scanData.md5 %></span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">SHA-1</span>
+                                <span class="info-value"><%= scanData.sha1 %></span>
+                            </li>
+                            <li class="info-item">
+                                <span class="info-label">SHA-256</span>
+                                <span class="info-value"><%= scanData.sha256 %></span>
+                            </li>
+                        <% } else { %>
+                            <li class="info-item">
+                                <span class="info-label">URL</span>
+                                <span class="info-value"><%= scanData.url %></span>
+                            </li>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Antivirüs Sonuçları -->
+            <div class="result-card">
+                <div class="result-card-header">
+                    <i class="fas fa-list-alt mr-2"></i>
+                    Antivirüs Sonuçları
+                </div>
+                <div class="result-card-body p-0">
+                    <div class="table-responsive">
+                        <table class="scan-table">
+                            <thead>
+                                <tr>
+                                    <th>Antivirüs</th>
+                                    <th>Sonuç</th>
+                                    <th>Son Güncelleme</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (scanData.scans) { %>
+                                    <% for (let [av, result] of Object.entries(scanData.scans)) { %>
+                                        <tr>
+                                            <td>
+                                                <strong><%= av %></strong>
+                                            </td>
+                                            <td><%= result.result || 'Temiz' %></td>
+                                            <td><%= result.update %></td>
+                                            <td>
+                                                <% if (result.detected) { %>
+                                                    <span class="status-badge status-threat">
+                                                        <i class="fas fa-virus"></i>
+                                                        Tehdit
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="status-badge status-safe">
+                                                        <i class="fas fa-check"></i>
+                                                        Güvenli
+                                                    </span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Ana Sayfaya Dön Butonu -->
+    <a href="/" class="back-button">
+        <i class="fas fa-home"></i>
+    </a>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scanData = <%- JSON.stringify(scanData) %>;
+            const type = '<%= type %>';
+            
+            const isScanningInProgress = (type === 'file' && (!scanData.scans || scanData.response_code !== 1)) || 
+                                       (type === 'url' && (!scanData.url || scanData.response_code === -2));
+            
+            if (isScanningInProgress) {
+                setInterval(() => {
+                    window.location.reload();
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

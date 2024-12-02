@@ -11,11 +11,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const API_KEY = process.env.VT_API_KEY;
 
-// Public klasörünü statik olarak sun
 app.use(express.static('public'));
 app.use(express.json());
 
-// Uploads klasörü oluştur
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir);
@@ -23,7 +21,6 @@ if (!fs.existsSync(uploadsDir)) {
 
 const upload = multer({ dest: 'uploads/' });
 
-// EJS template engine'i ekle
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -51,7 +48,6 @@ app.get('/results/file/:scanId', async (req, res) => {
     }
 });
 
-// URL tarama sonucu için endpoint
 app.get('/results/url/:encodedUrl', async (req, res) => {
     const encodedUrl = req.params.encodedUrl;
     const url = decodeURIComponent(encodedUrl);
@@ -79,7 +75,6 @@ app.get('/results/url/:encodedUrl', async (req, res) => {
     }
 });
 
-// AJAX kontrolleri için özel endpoint
 app.get('/results/:type/:id', async (req, res) => {
     if (req.query.check && req.headers['x-requested-with'] === 'XMLHttpRequest') {
         try {
@@ -121,16 +116,13 @@ app.get('/results/:type/:id', async (req, res) => {
             });
         }
     }
-    // Normal sayfa yüklemesi için mevcut işleyici devam eder...
 });
 
-// API_KEY kontrolü ekleyin
 if (!API_KEY) {
     console.error('HATA: VT_API_KEY tanımlanmamış. Lütfen .env dosyanızı kontrol edin.');
     process.exit(1);
 }
 
-// Hata yakalama için daha detaylı loglama ekleyin
 app.post('/scan/file', upload.single('file'), async (req, res) => {
     const file = req.file;
 
@@ -152,10 +144,8 @@ app.post('/scan/file', upload.single('file'), async (req, res) => {
         });
         console.log('VirusTotal yanıtı:', response.data);
 
-        // Geçici dosyayı sil
         fs.unlinkSync(file.path);
 
-        // Tarama sayfasına yönlendir
         res.json({
             scanId: response.data.scan_id,
             type: 'file',
@@ -171,7 +161,6 @@ app.post('/scan/file', upload.single('file'), async (req, res) => {
     }
 });
 
-// URL tarama endpoint'i
 app.post('/scan/url', async (req, res) => {
     const { url } = req.body;
 
@@ -180,7 +169,6 @@ app.post('/scan/url', async (req, res) => {
     }
 
     try {
-        // URL'yi taramaya gönder
         const scanResponse = await axios.post('https://www.virustotal.com/vtapi/v2/url/scan', null, {
             params: {
                 apikey: API_KEY,
@@ -188,7 +176,6 @@ app.post('/scan/url', async (req, res) => {
             }
         });
 
-        // Tarama sayfasına yönlendir - URL'yi encode ederek kullan
         res.json({
             scanId: scanResponse.data.scan_id,
             type: 'url',

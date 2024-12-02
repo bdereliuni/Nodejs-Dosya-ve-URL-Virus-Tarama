@@ -349,7 +349,7 @@
 <body>
     <div class="result-container">
         <% if ((type === 'file' && (!scanData.scans || scanData.response_code !== 1)) || (type === 'url' && (!scanData.url || scanData.response_code === -2))) { %>
-            <!-- Tarama Devam Ediyor -->
+            
             <div class="loading-container">
                 <div class="loading-content">
                     <div class="loading-spinner">
@@ -363,7 +363,7 @@
                 </div>
             </div>
         <% } else { %>
-            <!-- Sonuç Başlığı -->
+            
             <div class="result-header">
                 <h1>
                     <i class="fas fa-shield-alt mr-3"></i>
@@ -372,7 +372,6 @@
                 <p>Tarama işlemi <%= new Date(scanData.scan_date).toLocaleString('tr-TR') %> tarihinde tamamlandı</p>
             </div>
 
-            <!-- İstatistikler -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number text-success">
@@ -394,7 +393,7 @@
                 </div>
             </div>
 
-            <!-- Genel Durum -->
+            
             <% if (scanData.positives > 0) { %>
                 <div class="alert alert-danger">
                     <i class="fas fa-exclamation-triangle fa-2x"></i>
@@ -413,7 +412,7 @@
                 </div>
             <% } %>
 
-            <!-- Detaylı Bilgiler -->
+            
             <div class="result-card">
                 <div class="result-card-header">
                     <i class="fas fa-info-circle mr-2"></i>
@@ -444,7 +443,7 @@
                 </div>
             </div>
 
-            <!-- Antivirüs Sonuçları -->
+            
             <div class="result-card">
                 <div class="result-card-header">
                     <i class="fas fa-list-alt mr-2"></i>
@@ -494,7 +493,7 @@
         <% } %>
     </div>
 
-    <!-- Ana Sayfaya Dön Butonu -->
+    
     <a href="/" class="back-button">
         <i class="fas fa-home"></i>
     </a>

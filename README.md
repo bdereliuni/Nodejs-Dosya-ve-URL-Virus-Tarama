@@ -2,9 +2,9 @@
 
 <div align="center">
 
-![GitHub stars](https://img.shields.io/github/stars/kullaniciadi/projeadi?style=social)
-![GitHub forks](https://img.shields.io/github/forks/kullaniciadi/projeadi?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/kullaniciadi/projeadi?style=social)
+![GitHub stars](https://img.shields.io/github/stars/bdereliuni/Nodejs-Dosya-ve-URL-Virus-Tarama?style=social)
+![GitHub forks](https://img.shields.io/github/forks/bdereliuni/Nodejs-Dosya-ve-URL-Virus-Tarama?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/bdereliuni/Nodejs-Dosya-ve-URL-Virus-Tarama?style=social)
 
 </div>
 
@@ -33,7 +33,7 @@ Bu proje, VirusTotal API kullanarak dosya ve URL'lerin güvenlik taramasını ya
 
 1. **Depoyu Klonlayın:**
    ```bash
-   git clone https://github.com/kullaniciadi/projeadi.git
+   git clone https://github.com/bdereliuni/Nodejs-Dosya-ve-URL-Virus-Tarama.git
    cd projeadi
    ```
 

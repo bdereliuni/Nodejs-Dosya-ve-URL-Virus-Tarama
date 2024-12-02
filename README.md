@@ -1,4 +1,4 @@
-# 🛡️ Güvenlik Tarama Merkezi
+# 🛡️ VirusTotal API İle Dosya ve URL Virüs Taram Sitesi
 
 <div align="center">
 
